@@ -84,29 +84,6 @@ if (isset($pl1)&&!empty($pl1) && isset($pl2)&&!empty($pl2) &&
     }	
 }
 
-/**
-* selection name of player one
-*/
-function namePlayer1 () {
-	$this->unitDB();
-		$sql="SELECT * FROM game INNER JOIN playerName ON id_player=id_player1 ORDER BY id_game DESC LIMIT 1";
-		$res=mysql_query ($sql) or die (mysql_error ());
-		$rows=mysql_fetch_assoc($res);
-		echo $rows['name_player'];
-	   mysql_close();	 
-}
-
-/**
-* selection name of player two
-*/
-function namePlayer2 () {
-	$this->unitDB();
-	$sql="SELECT * FROM game INNER JOIN playerName ON id_player=id_player2 ORDER BY id_game DESC LIMIT 1";
-	$res=mysql_query ($sql) or die (mysql_error ());
-	$rows=mysql_fetch_assoc($res);
-	echo $rows['name_player'];
-    mysql_close();
-}
 
 /**
 * creating winners after the end of the game.
