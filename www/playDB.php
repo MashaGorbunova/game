@@ -8,7 +8,7 @@ class PlayerDB {
 
 /**
 * establishment database connection
-* @ return 
+* @ return connection with DB
 */	
 private function unitDB () {
 	//your name of host
@@ -33,6 +33,7 @@ private function unitDB () {
 
 /**
 * receiving request from the db
+* @param sql_query - query to DB
 * @return request from the db
 */
 function my_query ($sql_query) {
@@ -44,11 +45,10 @@ function my_query ($sql_query) {
 
 /**
 * creating new players and new game with this players.
-* Incoming parametrs:
-* $pl1 is name of player one
-* $pl2 is name of player two
-* $chip1 is mark of player one
-* $chip2 is mark of player two
+* @param $pl1 is name of player one
+* @param $pl2 is name of player two
+* @param $chip1 is mark of player one
+* @param $chip2 is mark of player two
 */
 function creatingPlayers ($pl1, $pl2, $chip1, $chip2) {
 
@@ -122,11 +122,10 @@ if (isset($pl1)&&!empty($pl1) && isset($pl2)&&!empty($pl2) &&
 
 /**
 * creating winners after the end of the game.
-* Imcoming parametrs:
-* $pl1 is name of player one
-* $pl2 is name of player two
-* $pl is name of player who won
-* $chip is mark of player who won
+* @param $pl1 is name of player one
+* @param $pl2 is name of player two
+* @param $pl is name of player who won
+* @param $chip is mark of player who won
 */	
 function creatingWinners ($pl1, $pl2, $pl, $chip) {
 
@@ -163,11 +162,10 @@ function creatingWinners ($pl1, $pl2, $pl, $chip) {
 
 /**
 * creating new game between this players again.
-* Imcoming parametrs:
-* $pl1 is name of player one
-* $pl2 is name of player two
-* $chip1 is mark of player one
-* $chip2 is mark of player two
+* @param $pl1 is name of player one
+* @param $pl2 is name of player two
+* @param $chip1 is mark of player one
+* @param $chip2 is mark of player two
 */	
 function creatingNewGame ($pl1, $pl2, $chip1, $chip2) {
 
@@ -193,7 +191,7 @@ function creatingNewGame ($pl1, $pl2, $chip1, $chip2) {
 /**
 * creating array with values from selecting from DB 
 * for building table of 10 last winners of the game.
-* Outcoming parametr is array of results from DB.
+* @return array of results from DB.
 */
 function tableWins () {
 
@@ -209,8 +207,8 @@ function tableWins () {
 
 /**
 * checking condition at the end of the game.
-* Incoming parametr is array.
-* If condition is true, function return true. 
+* @param $args - array with arguments in play's grid.
+* @return boolean true if condition is true. 
 */
 function filterFlag ($args = array()) {
 	if (is_array($args)){
