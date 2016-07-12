@@ -13,3 +13,10 @@ Rules of game:
 Name of players and results of game are entered into the database for statistics.
 
 Connection with DB is across php API mysqli.
+
+
+
+
+
+
+This project is developed by me and it's my intellectual property.
