@@ -33,7 +33,7 @@ session_start();
 <br><br>
 <table class="table table-condensed text-center">
 <?php
-require_once "D:/programme/openserver/version5.2.4/openserver/domains/localhost/game/www/playDB.php";
+require_once $_SERVER['DOCUMENT_ROOT']."/game/www/playDB.php";
 $pl = new PlayerDB ();
 $row = $pl -> tableWins();
 $count = 1;
