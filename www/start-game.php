@@ -51,7 +51,7 @@ for (i=0; i<3; i++) {
 <br><br>
 <form action= "play1.php" method="post" role="form">
 <?php
-require_once "D:/Programme/OpenServer/domains/phpnew/game/www/playDB.php";
+require_once "D:/programme/openserver/version5.2.4/openserver/domains/localhost/game/www/playDB.php";
 $pl = new PlayerDB ();
 $pl -> creatingPlayers ($_POST [player1], $_POST [player2], $_POST [chip1], $_POST [chip2]);
 $_SESSION['player1'] = $_POST [player1];

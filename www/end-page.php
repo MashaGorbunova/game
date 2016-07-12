@@ -33,7 +33,7 @@ session_start();
 <br><br>
 <table class="table table-condensed text-center">
 <?php
-require_once "D:/Programme/OpenServer/domains/phpnew/game/www/playDB.php";
+require_once "D:/programme/openserver/version5.2.4/openserver/domains/localhost/game/www/playDB.php";
 $pl = new PlayerDB ();
 $row = $pl -> tableWins();
 $count = 1;
@@ -41,7 +41,7 @@ $count = 1;
 echo "<tr class='success'><th>Game</th><th>Name of winner</th><th>Mark of winner</th></tr>";
 for ($i=0; $i<10; $i++) {
 	echo "<tr>";
-    echo "<td>", $count++, "</td><td>", $row[$i]['name_player'], "</td><td>", $row[$i]['name'], "</td>";  				
+    echo "<td>", $count++, "</td><td>", $row[$i]['player_name'], "</td><td>", $row[$i]['chip'], "</td>";  				
 	echo "</tr>";
 }
 ?>

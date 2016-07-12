@@ -1,6 +1,6 @@
 <?php
 session_start();
-require_once "D:/Programme/OpenServer/domains/phpnew/game/www/playDB.php";
+require_once "D:/programme/openserver/version5.2.4/openserver/domains/localhost/game/www/playDB.php";
 $p = new PlayerDB ();
 
 $c=array();

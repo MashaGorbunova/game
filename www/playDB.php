@@ -8,6 +8,7 @@ class PlayerDB {
 
 /**
 * establishment database connection
+* @ return 
 */	
 private function unitDB () {
 	//your name of host
@@ -19,22 +20,37 @@ private function unitDB () {
 	//your password for DB
 	$DB_password = '';
 	
+	//your name of DB
+	$DB_name = 'play';
+	
     error_reporting(E_ALL ^ E_NOTICE);
-    mysql_connect ($DB_host, $DB_user, $DB_password) or
-        die("Could not connect: " . mysql_error());
-    mysql_select_db ('play');
+	
+    $link = mysqli_connect($DB_host, $DB_user, $DB_password, $DB_name) or
+        die("Could not connect: " . mysqli_error());
+		
+	return $link;
+}
+
+/**
+* receiving request from the db
+* @return request from the db
+*/
+function my_query ($sql_query) {
+	$link = $this->unitDB();
+	$res = mysqli_query($link, $sql_query) or die (mysqli_error($link));
+	return $res;
+
 }
 
 /**
 * creating new players and new game with this players.
-* Imcoming parametrs:
+* Incoming parametrs:
 * $pl1 is name of player one
 * $pl2 is name of player two
 * $chip1 is mark of player one
 * $chip2 is mark of player two
 */
 function creatingPlayers ($pl1, $pl2, $chip1, $chip2) {
-$this->unitDB();
 
 if (isset($pl1)&&!empty($pl1) && isset($pl2)&&!empty($pl2) &&
     isset($chip1)&&!empty($chip1) && isset($chip2)&&!empty($chip2)) {
@@ -44,43 +60,62 @@ if (isset($pl1)&&!empty($pl1) && isset($pl2)&&!empty($pl2) &&
         $chip2 = trim (htmlspecialchars ($chip2, ENT_QUOTES));
         $date = date('Y-m-d', time());
 		
-		$respl1=mysql_query ("SELECT name_player FROM playerName WHERE name_player LIKE '$p1'") or die (mysql_error);
-		if (mysql_num_rows($respl1)==0) {
-			$sql1 = "INSERT INTO playerName (name_player) VALUES ('$p1')";
-	        mysql_query ($sql1) or die (mysql_error ());
+		$query_player1 = "SELECT * FROM playerName WHERE player_name LIKE '$p1'";
+		$player1 = $this->my_query($query_player1);
+		
+		if (mysqli_num_rows($player1)==0) {
+			$sql1 = "INSERT INTO playerName (player_name) VALUES ('$p1')";
+	        $this->my_query($sql1);
 		}
-		$respl2=mysql_query ("SELECT name_player FROM playerName WHERE name_player LIKE '$p2'") or die (mysql_error);
-		if (mysql_num_rows($respl2)==0) {
-			$sql2 = "INSERT INTO playerName (name_player) VALUES ('$p2')";
-	        mysql_query ($sql2) or die (mysql_error ());
+		
+		$query_player2 = "SELECT * FROM playerName WHERE player_name LIKE '$p2'";
+		$player2 = $this->my_query($query_player2);
+		
+		if (mysqli_num_rows($player2)==0) {
+			$sql2 = "INSERT INTO playerName (player_name) VALUES ('$p2')";
+	        $this->my_query($sql2);
 		}
-		$row = mysql_fetch_assoc (mysql_query("SELECT id_player FROM playerName WHERE name_player LIKE '$p1'"));		
-        $id_p1=$row['id_player'];
-        $row = mysql_fetch_assoc (mysql_query("SELECT id_player FROM playerName WHERE name_player LIKE '$p2'"));
-        $id_p2=$row['id_player'];
-
-        if ($chip1 != $chip2) {
-	        $row = mysql_fetch_assoc (mysql_query("SELECT id FROM chip WHERE name LIKE '$chip1'"));
-            $id_chip1=$row['id'];
-            $row = mysql_fetch_assoc (mysql_query("SELECT id FROM chip WHERE name LIKE '$chip2'"));
-            $id_chip2=$row['id'];
-			$sql = "INSERT INTO game (id_player1, id_chip1, id_player2, id_chip2, date) VALUES ('$id_p1', '$id_chip1', '$id_p2', '$id_chip2', '$date')";
-	        mysql_query ($sql) or die (mysql_error ());
+		
+		$row1 = mysqli_fetch_assoc($this->my_query($query_player1));
+		$id_p1 = $row1['id'];
+	
+		$row2 = mysqli_fetch_assoc($this->my_query($query_player2));
+		$id_p2 = $row2['id'];
+		
+		
+		if ($chip1 != $chip2) {
+			$query_chip1 = "SELECT id FROM chip WHERE chip LIKE '$chip1'";
+		    $chip1 = $this->my_query($query_chip1);
+	        $row1 = mysqli_fetch_assoc ($chip1);
+            $id_chip1=$row1['id'];
+			
+			$query_chip2 = "SELECT id FROM chip WHERE chip LIKE '$chip2'";
+		    $chip2 = $this->my_query($query_chip2);
+            $row2 = mysqli_fetch_assoc ($chip2);
+            $id_chip2=$row2['id'];
+			
+			$sql = "INSERT INTO game (player1, chip1, player2, chip2, date) VALUES ('$id_p1', '$id_chip1', '$id_p2', '$id_chip2', '$date')";
+	        $this->my_query($sql);
 	    }
 		else {
 	        if ($chip1=="crosses") {
 		        $chip2="noughts";
 	        }
 	        else $chip2="crosses";
-		    $row = mysql_fetch_assoc (mysql_query("SELECT id FROM chip WHERE name LIKE '$chip1'"));
-            $id_chip1=$row['id'];
-            $row = mysql_fetch_assoc (mysql_query("SELECT id FROM chip WHERE name LIKE '$chip2'"));
-            $id_chip2=$row['id'];
-
-	        $sql = "INSERT INTO game (id_player1, id_chip1, id_player2, id_chip2, date) VALUES ('$id_p1', '$id_chip1', '$id_p2', '$id_chip2', '$date')";
-	        mysql_query ($sql) or die (mysql_error ());
-        }
-        mysql_close();	
+			
+		    $query_chip1 = "SELECT id FROM chip WHERE chip LIKE '$chip1'";
+		    $chip1 = $this->my_query($query_chip1);
+	        $row1 = mysqli_fetch_assoc ($chip1);
+            $id_chip1=$row1['id'];
+			
+			$query_chip2 = "SELECT id FROM chip WHERE chip LIKE '$chip2'";
+		    $chip2 = $this->my_query($query_chip2);
+            $row2 = mysqli_fetch_assoc ($chip2);
+            $id_chip2=$row2['id'];
+			
+			$sql = "INSERT INTO game (player1, chip1, player2, chip2, date) VALUES ('$id_p1', '$id_chip1', '$id_p2', '$id_chip2', '$date')";
+	        $this->my_query($sql);
+        }	
     }	
 }
 
@@ -94,38 +129,36 @@ if (isset($pl1)&&!empty($pl1) && isset($pl2)&&!empty($pl2) &&
 * $chip is mark of player who won
 */	
 function creatingWinners ($pl1, $pl2, $pl, $chip) {
-	$this->unitDB();
+
+	$sql1="SELECT id FROM playerName WHERE player_name = '$pl1'";
+	$res1=$this->my_query($sql1);
+	$row1=mysqli_fetch_assoc($res1);
+	$name_win1=$row1['id'];
 		
-	$sql1="SELECT id_player FROM playerName WHERE name_player = '$pl1'";
-	$res1=mysql_query($sql1) or die (mysql_error());
-	$row1=mysql_fetch_assoc($res1);
-	$name_win1=$row1['id_player'];
+	$sql2="SELECT id FROM playerName WHERE player_name = '$pl2'";
+	$res2=$this->my_query($sql2);
+	$row2=mysqli_fetch_assoc($res2);
+	$name_win2=$row2['id'];
 		
-	$sql2="SELECT id_player FROM playerName WHERE name_player = '$pl2'";
-	$res2=mysql_query($sql2) or die (mysql_error());
-	$row2=mysql_fetch_assoc($res2);
-	$name_win2=$row2['id_player'];
-		
-	$sql3="SELECT id FROM chip WHERE name = '$chip'";
-	$res3=mysql_query($sql3) or die (mysql_error());
-	$row3=mysql_fetch_assoc($res3);
+	$sql3="SELECT id FROM chip WHERE chip = '$chip'";
+	$res3=$this->my_query($sql3);
+	$row3=mysqli_fetch_assoc($res3);
 	$chip_win=$row3['id'];
 		
-	$sql4="SELECT id_game FROM game WHERE (id_player1 = '$name_win1' AND id_player2 = '$name_win2') ORDER BY id_game DESC LIMIT 1";
-	$res4=mysql_query ($sql4) or die (mysql_error ());
-	$row4=mysql_fetch_assoc($res4);
-	$id_game=$row4['id_game'];
+	$sql4="SELECT id FROM game WHERE (player1 = '$name_win1' AND player2 = '$name_win2') ORDER BY id DESC LIMIT 1";
+	$res4=$this->my_query($sql4);
+	$row4=mysqli_fetch_assoc($res4);
+	$id_game=$row4['id'];
 		
 	if ($pl == $pl1) {
-		$sql="INSERT INTO wins (name_win, chip_win, game) VALUES ($name_win1, $chip_win, $id_game)";
-		mysql_query($sql) or die (mysql_error());
+		$sql="INSERT INTO wins (id_game, name_win, chip_win) VALUES ($id_game, $name_win1, $chip_win)";
+		$this->my_query($sql);
 	}
 	if ($pl == $pl2) {
-		$sql="INSERT INTO wins (name_win, chip_win, game) VALUES ($name_win2, $chip_win, $id_game)";
-		mysql_query($sql) or die (mysql_error());
+		$sql="INSERT INTO wins (id_game, name_win, chip_win) VALUES ($id_game, $name_win2, $chip_win)";
+		$this->my_query($sql);
 	}
-		
-	mysql_close();
+	
 }
 
 /**
@@ -137,24 +170,24 @@ function creatingWinners ($pl1, $pl2, $pl, $chip) {
 * $chip2 is mark of player two
 */	
 function creatingNewGame ($pl1, $pl2, $chip1, $chip2) {
-    $this->unitDB();
 
     $date = date('Y-m-d', time());
 		
-	$row = mysql_fetch_assoc (mysql_query("SELECT id_player FROM playerName WHERE name_player LIKE '$pl1'"));		
-    $id_p1=$row['id_player'];
+	$row = mysqli_fetch_assoc ($this->my_query("SELECT id FROM playerName WHERE player_name LIKE '$pl1'"));		
+    $id_p1=$row['id'];
 	
-    $row = mysql_fetch_assoc (mysql_query("SELECT id_player FROM playerName WHERE name_player LIKE '$pl2'"));
-    $id_p2=$row['id_player'];
+    $row = mysqli_fetch_assoc ($this->my_query("SELECT id FROM playerName WHERE player_name LIKE '$pl2'"));
+    $id_p2=$row['id'];
 
-	$row = mysql_fetch_assoc (mysql_query("SELECT id FROM chip WHERE name LIKE '$chip1'"));
+	$row = mysqli_fetch_assoc ($this->my_query("SELECT id FROM chip WHERE chip LIKE '$chip1'"));
     $id_chip1=$row['id'];
 	
-    $row = mysql_fetch_assoc (mysql_query("SELECT id FROM chip WHERE name LIKE '$chip2'"));
+    $row = mysqli_fetch_assoc ($this->my_query("SELECT id FROM chip WHERE chip LIKE '$chip2'"));
     $id_chip2=$row['id'];
 	
-    $sql = "INSERT INTO game (id_player1, id_chip1, id_player2, id_chip2, date) VALUES ('$id_p1', '$id_chip1', '$id_p2', '$id_chip2', '$date')";
-	mysql_query ($sql) or die (mysql_error ());
+    $sql = "INSERT INTO game (player1, chip1, player2, chip2, date) VALUES ('$id_p1', '$id_chip1', '$id_p2', '$id_chip2', '$date')";
+	$this->my_query($sql);
+	
 }
 	
 /**
@@ -163,14 +196,15 @@ function creatingNewGame ($pl1, $pl2, $chip1, $chip2) {
 * Outcoming parametr is array of results from DB.
 */
 function tableWins () {
-	$this->unitDB();
-	$res = mysql_query("SELECT * FROM wins INNER JOIN chip ON id=chip_win INNER JOIN playerName ON id_player=name_win ORDER BY game DESC LIMIT 10");
+
+	$res = $this->my_query("SELECT * FROM wins w INNER JOIN chip c ON c.id=w.chip_win INNER JOIN playerName p ON p.id=w.name_win ORDER BY id_game DESC LIMIT 10");
 	$array = array ();
 	$count = 0;
-	while ($row = mysql_fetch_assoc ($res)) {
+	while ($row = mysqli_fetch_assoc ($res)) {
 				$array [$count++] = $row;
 	}
 	return $array;
+	
 }
 
 /**
